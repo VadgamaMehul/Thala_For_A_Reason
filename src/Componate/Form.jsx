@@ -1,21 +1,23 @@
 // CoverPhoto.js
-import React from "react";
+import React, { useState, useRef } from 'react';
 import { styled } from "@mui/system";
 import { TextField, Button } from "@mui/material";
 import "./CoverPhoto.css"; // Import the CSS file for styling
-import { useState } from "react";
 import Dhoni from "./Ms_Dhoni.jpg";
 import Mobil from "./Mobile.jpg";
-const coverDesktop = "https://media.tenor.com/DIrUjkTnopsAAAAM/dhoni-funny-dance-bole-jo-koyal-bago-me.gif";
+import danceAudio from "./Bole_jo_koyal.mp3"
+
+const desktopDance = "https://i.pinimg.com/originals/86/dc/94/86dc9402d372cb78469a659e19c6174c.gif"
 const coverMobiel = "https://media.tenor.com/DIrUjkTnopsAAAAM/dhoni-funny-dance-bole-jo-koyal-bago-me.gif";
 
 const img1 = window.innerWidth >= 800 ? Dhoni : Mobil;
-const img2 = window.innerWidth >= 800 ? coverDesktop : coverMobiel;
+const img2 = window.innerWidth >= 800 ? desktopDance : coverMobiel;
 
 const FormContainer = styled("div")({
   position: "absolute",
   top: "50%", // Center vertically
   left: "50%", // Center horizontally
+  width:"70%",
   transform: "translate(-50%, -50%)", // Center the form
   padding: "2rem",
   backgroundColor: "rgba(255, 250, 255, 0.8)", // Semi-transparent white background
@@ -26,12 +28,23 @@ const FormContainer = styled("div")({
 const CoverForm = ({onSubmit,onReset}) => {
   const [inputValue, setInputValue] = useState("");
   const [resultMessage, setResultMessage] = useState("");
+  const audioRef = useRef(null);
+
+  const playAudio = () => {
+    audioRef.current.play();
+  };
+
+  const stopAudio = () => {
+    audioRef.current.pause();
+    audioRef.current.currentTime = 0;
+  };
 
   const handleReste = (event) => {
     event.preventDefault();
     onReset(img1);
     setResultMessage("");
     setInputValue("");
+    stopAudio();
   };
 
   const handleSubmit = (event) => {
@@ -53,6 +66,7 @@ const CoverForm = ({onSubmit,onReset}) => {
       if (sumOrLength === 7) {
         setResultMessage("Thala For A Reason");
         onSubmit(newCover);
+        playAudio();
         return;
       } else {
         setResultMessage("You Are Not Thala For A Reason");
@@ -68,7 +82,7 @@ const CoverForm = ({onSubmit,onReset}) => {
     <FormContainer>
       <form onSubmit={handleSubmit}>
         <TextField
-          label="Enter Name or BirhDate"
+          label="Enter Name or BirthYear"
           autoComplete="off"
           variant="outlined"
           fullWidth
@@ -76,6 +90,7 @@ const CoverForm = ({onSubmit,onReset}) => {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         />
+        <audio ref={audioRef} src={danceAudio} />
         <Button
           type="submit"
           variant="contained"
@@ -95,12 +110,13 @@ const CoverForm = ({onSubmit,onReset}) => {
           style={{
             // float: "right",
             margin: "20px 10px 0",
+
           }}
         >
           Reset
         </Button>
       </form>
-      {resultMessage && <p>{resultMessage}</p>}
+      {resultMessage && <h1>{resultMessage}</h1>}
     </FormContainer>
   );
 };
